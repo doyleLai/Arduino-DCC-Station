@@ -1,3 +1,6 @@
+// This project is also available on https://github.com/doyleLai/Arduino-DCC-Station
+// This project is adapted from Michael Blank's work. 
+
 // 23. November 2009
 // works well with LMD18200 Booster !!!!!
 
