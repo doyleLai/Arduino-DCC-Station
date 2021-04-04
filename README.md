@@ -14,14 +14,23 @@ Each message is enclosed by "<>" and has the following format:
 ```
 Type (1 byte), Address (1 byte), Payload
 ```
-#### Type S (speed control)
-Payload is 1 byte of direction [0 (backward),1 (forward)], followed by 3-byte fixed size of 128 speed steps value [%d3].
-#### Type F (Function control)
-Payload is a 2-byte fixed size of the index of function F00-F20 [%d2], followed by 1 byte of on/off [1,0].
-F0 is the control of the headlight.
+#### Type S - Speed control
+Payload is 1 byte of direction [0 (backward),1 (forward)], followed by 3-byte fixed size value of 128 speed steps [%d3].
 
 Example:
 ```
 <S31005>
 ```
 This message is to set the speed of address 3 decoder to forward direction and speed steps 5.
+
+#### Type F - Function control
+Payload is a 2-byte fixed size value of the index of function F0-F20 [%d2], followed by 1 byte value of on/off [1,0].
+* F0 is the control of the headlight.
+
+Example:
+```
+<F3021>
+```
+This message is to turn ON the Function 2 of address 3 decoder.
+
+
