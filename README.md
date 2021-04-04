@@ -7,7 +7,7 @@ You need an H-bridge motor driver to deliver a large current flow used by locomo
 If you use a non-isolated oscilloscope to inspect the Arduino or the motor driver's output, attach the probe tip only. Never connect the ground lead of a non-isolated oscilloscope to any signal pin.
 
 ## Control Messages
-The program continuously reads control messages from the USB serial port and generates corresponding DCC messages. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 is the headlight control), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repeating control messages.
+The program continuously reads control messages from the USB serial port and generates corresponding DCC messages. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repeating control messages.
 
 ### Message formet
 Each message is enclosed by "<>" and has the following format:
