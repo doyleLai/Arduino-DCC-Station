@@ -9,7 +9,7 @@ If you use a non-isolated oscilloscope to inspect the Arduino or the motor drive
 ## Control Messages
 The program continuously reads control messages from the USB serial port and generates corresponding DCC messages. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repeating control messages.
 
-### Message formet
+### Message format
 Each message is enclosed by "<>" and has the following format:
 ```
 Type (1 byte), Address (1 byte), Payload
