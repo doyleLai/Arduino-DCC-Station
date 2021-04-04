@@ -21,10 +21,10 @@ Example:
 ```
 <S31005>
 ```
-* Type = S
-* Address = 3
-* Direction = 1
-* Speed Step = 005
+* Type: S
+* Address: 3
+* Direction: 1
+* Speed Step: 005
 
 This message is to set the speed of address 3 decoder to forward direction and speed steps 5.
 
@@ -36,10 +36,10 @@ Example:
 ```
 <F3021>
 ```
-* Type = F
-* Address = 3
-* Function = 02
-* ON/OFF = 1
+* Type: F
+* Address: 3
+* Function: 02
+* ON/OFF: 1
 
 This message is to turn ON the Function 2 of address 3 decoder.
 
