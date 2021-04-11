@@ -23,9 +23,9 @@ The payload is 1 byte of direction D [0 (backward),1 (forward)], followed by 3-b
 
 #### Type F - Function control
 ```
-<FAIIO>
+<FAUUE>
 ```
-The payload is a 2-byte fixed size value of the index of function F0-F20 II [00-20], followed by 1 byte value of on/off O [1,0].
+The payload is a 2-byte fixed size value of the index of function F0-F20 UU [00-20], followed by 1 byte value of on/off E [1,0].
 * F0 is the control of the headlight.
 
 #### Example 1:
@@ -45,7 +45,7 @@ The following message turns ON the F2 of address 3 decoder.
 ```
 * Type (T): F
 * Address (A): 3
-* Function (II): 02
+* Function (UU): 02
 * ON/OFF (O): 1
 
 
