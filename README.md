@@ -15,11 +15,17 @@ Each message is enclosed by "<>" and has the following format:
 Type (1 byte), Address (1 byte), Payload
 ```
 #### Type S - Speed control
+```
+<SADVVV>
+```
 This type of message controls the direction and speed step of a locomotive.
-The payload is 1 byte of direction [0 (backward),1 (forward)], followed by 3-byte fixed size value of 128 speed step [000-128].
+The payload is 1 byte of direction D [0 (backward),1 (forward)], followed by 3-byte fixed size value of 128 speed step VVV [000-128].
 
 #### Type F - Function control
-The payload is a 2-byte fixed size value of the index of function F0-F20 [00-20], followed by 1 byte value of on/off [1,0].
+```
+<SAFFO>
+```
+The payload is a 2-byte fixed size value of the index of function F0-F20 FF [00-20], followed by 1 byte value of on/off O [1,0].
 * F0 is the control of the headlight.
 
 #### Example 1:
@@ -27,20 +33,20 @@ The following message sets the speed of address 3 decoder to forward direction a
 ```
 <S31005>
 ```
-* Type: S
-* Address: 3
-* Direction: 1
-* Speed Step: 005
+* Type (T): S
+* Address (A): 3
+* Direction (D): 1
+* Speed Step (VVV): 005
 
 #### Example 2:
 The following message turns ON the F2 of address 3 decoder.
 ```
 <F3021>
 ```
-* Type: F
-* Address: 3
-* Function: 02
-* ON/OFF: 1
+* Type (T): F
+* Address (A): 3
+* Function (FF): 02
+* ON/OFF (O): 1
 
 
 
