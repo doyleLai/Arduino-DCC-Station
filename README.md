@@ -1,5 +1,5 @@
 # Arduino-DCC-Station
-This project is adapted from Michael Blank's work. The original program supports one locomotive only. This program aims to support multiple locomotives.
+This project is adapted from Michael Blank's work. The original program supports one decoder only. This program aims to support multiple decoders.
 
 ## Hardware Configuration
 You need an H-bridge motor driver to deliver a large current flow used by locomotives. Connect Ardunio's pin 11 and 12 to the two input pins of your H-bridge. Connect the two output pins of the H-bridge to the rails.
