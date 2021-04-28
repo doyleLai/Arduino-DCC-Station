@@ -54,8 +54,11 @@ The following message turns ON the F2 of address 3 decoder.
 1. Download and unzip the project.
 2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
 3. Upload the program to your board.
+4. Wire the hardware. Make sure you have used an external power source to power the motor drive.
+5. Connect to the USB Serial port of the Arduino.
+6. Send control messages and enjoy! 
 
 ## Disclaimer
-You should take your own risk to use this program. The author of the program is not responsible for any damage, hurt, or any kind of accident caused by the use of the program code.
+You should take your own risk to use the information in this project. The author of the project is not responsible for any damage, hurt, or any kind of accident caused by the use of the program code and the electronic components.
 
 
