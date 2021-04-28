@@ -48,7 +48,7 @@ The following message turns ON the F2 of address 3 decoder.
 * Type (T): F
 * Address (A): 3
 * Function (UU): 02
-* ON/OFF (O): 1
+* ON/OFF (E): 1
 
 ## How to use it
 1. Download and unzip the project.
