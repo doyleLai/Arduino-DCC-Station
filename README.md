@@ -4,6 +4,8 @@ This project is adapted from Michael Blank's work. The original program supports
 ## Hardware Configuration
 You need an H-bridge motor driver to deliver a large current flow used by locomotives. Connect Ardunio's pin 11 and 12 to the two input pins of your H-bridge. Connect the two output pins of the H-bridge to the rails.
 
+This program was tested in Arduino UNO Rev3.
+
 If you use a non-isolated oscilloscope to measure the Arduino or the motor driver's output pulses, attach the probe tip only. Never connect the ground lead of a non-isolated oscilloscope to any signal pin.
 
 ## Control Messages
@@ -48,6 +50,12 @@ The following message turns ON the F2 of address 3 decoder.
 * Function (UU): 02
 * ON/OFF (O): 1
 
+## How to use
+1. Download and unzip the project.
+2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
+3. Upload the program to your board.
 
+## Disclaimer
+You should take your own risk to use this program. The author of the program is not responsible for any damage, hurt, or any kind of accident caused by the use of the program code.
 
 
