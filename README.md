@@ -50,7 +50,7 @@ The following message turns ON the F2 of address 3 decoder.
 * Function (UU): 02
 * ON/OFF (O): 1
 
-## How to use
+## How to use it
 1. Download and unzip the project.
 2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
 3. Upload the program to your board.
