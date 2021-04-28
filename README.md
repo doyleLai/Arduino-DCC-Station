@@ -23,7 +23,8 @@ Type (1 byte), Address (1 byte), Payload
 This type of message controls the direction and speed step of a locomotive.
 The payload is 1 byte of direction D [0 (backward),1 (forward)], followed by 3-byte fixed size value of 128 speed step VVV [000-128].
 
-Example: Sets the speed of address 3 decoder to forward direction and speed steps 5.
+#### Example
+Sets the speed of address 3 decoder to forward direction and speed step 5.
 ```
 <S31005>
 ```
@@ -39,7 +40,8 @@ Example: Sets the speed of address 3 decoder to forward direction and speed step
 The payload is a 2-byte fixed size value of the index of function F0-F20 UU [00-20], followed by 1 byte value of on/off E [1,0].
 * F0 is the control of the headlight.
 
-Example: Turns ON the F2 of address 3 decoder.
+#### Example
+Turns ON the F2 of address 3 decoder.
 ```
 <F3021>
 ```
