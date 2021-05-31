@@ -8,6 +8,14 @@ This program was tested in Arduino UNO Rev3.
 
 If you use a non-isolated oscilloscope to measure the Arduino or the motor driver's output pulses, attach the probe tip only. Never connect the ground lead of a non-isolated oscilloscope to any signal pin.
 
+## How to use it
+1. Download and unzip the project.
+2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
+3. Upload the program to your board.
+4. Wire the hardware. Make sure you have used an external power source to power the motor driver.
+5. Connect to the USB Serial port of the Arduino.
+6. Send control messages (see below) and enjoy! 
+
 ## Control Messages
 The program continuously reads control messages from the USB serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repeating control messages.
 
@@ -49,14 +57,6 @@ Turns ON the F2 of address 3 decoder.
 * Address (A): 3
 * Function (UU): 02
 * ON/OFF (E): 1
-
-## How to use it
-1. Download and unzip the project.
-2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
-3. Upload the program to your board.
-4. Wire the hardware. Make sure you have used an external power source to power the motor driver.
-5. Connect to the USB Serial port of the Arduino.
-6. Send control messages and enjoy! 
 
 ## Disclaimer
 You should take your own risk to use the information in this project. The author of the project is not responsible for any damage, hurt, or any kind of accident caused by the use of the program code and the electronic components.
