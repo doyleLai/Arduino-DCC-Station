@@ -11,10 +11,10 @@ If you use a non-isolated oscilloscope to measure the Arduino or the motor drive
 ## How to use it
 1. Download and unzip the project.
 2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
-3. Upload the program to your board.
-4. Wire the hardware. Make sure you have used an external power source to power the motor driver.
-5. Connect to the USB Serial port of the Arduino.
-6. Send control messages (see below) and enjoy! 
+3. Upload the program to your Arduino board.
+4. Wire the hardware. Make sure you have used an external power source to power up the motor driver and the tracks.
+5. On your computer, connect to the USB Serial port of the Arduino using any serial port software.
+6. Send control messages (see below) to control your locos! 
 
 ## Control Messages
 The program continuously reads control messages from the USB serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repeating control messages.
