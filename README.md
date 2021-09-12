@@ -61,6 +61,4 @@ Turns ON the F2 of address 3 decoder.
   * ON/OFF (E): 1
 
 ## Disclaimer
-You should take your own risk to use the information in this project. The author of the project is not responsible for any damage, hurt, or any kind of accident caused by the use of the program code and the electronic components.
-
-
+You should take your own risk to use anything in this project. The author of the project is not responsible for any damage, hurt, or any kind of accident caused by the use of the program code and the suggested electronic components.
