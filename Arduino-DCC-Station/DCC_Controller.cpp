@@ -146,4 +146,6 @@ class DCC_Controller{
     }
 };
 
+//extern DCC_Controller DCC;
+
 #endif
