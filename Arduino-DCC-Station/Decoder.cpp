@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Decoder_cpp
+#define Decoder_cpp
+
 #include <Arduino.h>
 // F0 = FL (Lighting)
 
@@ -55,3 +57,6 @@ class Decoder {
       return s;
     }
 };
+
+
+#endif

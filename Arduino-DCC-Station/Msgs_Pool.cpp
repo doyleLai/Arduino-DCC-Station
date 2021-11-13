@@ -1,9 +1,10 @@
-#pragma once
+#ifndef Msgs_Pool_cpp
+#define Msgs_Pool_cpp
 
 #include <Arduino.h>
 #include "DCC_Packet_Generator.cpp"
 #include "Packet.cpp"
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 50
 
 class Msgs_Pool {
   private:
@@ -43,3 +44,5 @@ class Msgs_Pool {
         return m;
     }
 };
+
+#endif

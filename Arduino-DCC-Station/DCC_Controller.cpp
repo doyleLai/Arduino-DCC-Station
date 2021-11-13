@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DCC_Controller_cpp
+#define DCC_Controller_cpp
 
 #include "Msgs_Pool.cpp"
 #include "Decoder.cpp"
@@ -144,3 +145,5 @@ class DCC_Controller{
       pool->fill(m);
     }
 };
+
+#endif

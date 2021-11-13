@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DCC_Packet_Generator_cpp
+#define DCC_Packet_Generator_cpp
 
 #include "Decoder.cpp"
 #include "Packet.cpp"
@@ -169,3 +170,6 @@ class DCC_Packet_Generator {
       return m;
     }
 };
+
+
+#endif

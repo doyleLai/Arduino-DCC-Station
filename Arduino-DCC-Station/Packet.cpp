@@ -1,4 +1,5 @@
-#pragma once
+#ifndef Packet_cpp
+#define Packet_cpp
 
 struct Packet {
   enum Type
@@ -16,3 +17,5 @@ struct Packet {
   unsigned int len;
   Type type;
 } ;
+
+#endif

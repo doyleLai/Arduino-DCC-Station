@@ -187,7 +187,8 @@ void loop(void) {
       isStarted = true;
       inString = "";
     }
-    else if (inChar == '>'){        
+    else if (inChar == '>'){
+      Serial.println(inString);   
       dccController->processFrame(inString);
       isStarted = false;
     }
@@ -196,4 +197,3 @@ void loop(void) {
     }
   }
 }
-
