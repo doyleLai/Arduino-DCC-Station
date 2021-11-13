@@ -1,5 +1,5 @@
 # Arduino-DCC-Station
-This project was adapted from Michael Blank's work. The original program supports one decoder only. This program aims to support up to 10 decoders.
+This project was adapted from Michael Blank's work. The original program supports one decoder only. This program aims to support up to 9 decoders.
 
 ## Hardware Configuration
 You need an H-bridge motor driver to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track and locomotives directly. To set up the circuit, connect the pin 11 and 12 on Arduino to the two input pins on your H-bridge. Connect the two output pins on the H-bridge to the track.
@@ -29,7 +29,7 @@ Type (1 byte), Address (1 byte), Payload
 <SADVVV>
 ```
 This type of message controls the direction and speed step of a locomotive.
-The payload consists of 1 byte of direction D [0 (backward),1 (forward)], followed by 3 bytes of 128 speed step VVV [000-128].
+The payload consists of 1 byte of direction D [0 (backward),1 (forward)], followed by 3 bytes of 128 speed step VVV [000-127].
 
 #### Example
 Sets the speed of address 3 decoder to forward direction and speed step 5.
