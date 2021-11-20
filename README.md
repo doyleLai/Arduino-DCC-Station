@@ -4,7 +4,7 @@ This project was adapted from Michael Blank's work. The original program support
 ## Hardware Configuration
 You need an H-bridge motor driver to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track and locomotives directly. To set up the circuit, connect the pin 11 and 12 on Arduino to the two input pins on your H-bridge. Connect the two output pins on the H-bridge to the track.
 
-This program was tested on Arduino UNO Rev3.
+This program was tested on Arduino UNO Rev3 and should work on other ATmega328p boards.
 
 >If you use a non-isolated oscilloscope to measure the output pulses on Arduino or the motor driver, attach the probe tip only. Never connect the ground lead of a non-isolated oscilloscope to any signal pin.
 
@@ -13,8 +13,7 @@ This program was tested on Arduino UNO Rev3.
 2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
 3. Upload the program to your Arduino board.
 4. Wire the Arduino board, moter driver and the tracks. Make sure you have used an external power source to power up the motor driver and the tracks.
-5. On your computer, connect to the USB Serial port on the Arduino using any serial port software.
-6. Send control messages (see below) to control your locos! 
+5. Open Serial Monitor and send control messages (see below) to control your locos. 
 
 ## Control Messages
 The program continuously reads control messages from the USB serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repeating sending control messages.
