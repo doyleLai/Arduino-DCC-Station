@@ -2,7 +2,7 @@
 #define DCC_Packet_Generator_cpp
 
 #include "Decoder.cpp"
-#include "Packet.cpp"
+#include "Packet.h"
 
 // Check out the DCC packet format from this website.
 // https://www.nmra.org/sites/default/files/s-9.2.1_2012_07.pdf

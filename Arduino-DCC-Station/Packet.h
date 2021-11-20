@@ -1,5 +1,5 @@
-#ifndef Packet_cpp
-#define Packet_cpp
+#ifndef Packet_h
+#define Packet_h
 
 struct Packet {
   enum Type
