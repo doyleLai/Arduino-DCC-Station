@@ -1,60 +1,38 @@
 #ifndef Decoder_cpp
 #define Decoder_cpp
-
-#include <Arduino.h>
+#include <stdint.h>
 // F0 = FL (Lighting)
 
 class Decoder {
   private:
-    int address = 0;
+    uint8_t address = 0;
   public:
-    int speedStep = 0;
+    uint8_t speedStep = 0;
     bool dir = 1;
-    bool functions[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    bool fL = false;
+    bool functions[30] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     Decoder() {
     }
 
-    Decoder(int addr) {
+    Decoder(uint8_t addr) {
       this->address = addr;
     }
 
-    void SetFunc(int func) {
-      if (func == 0) {
-        this->fL = true;
-      }
-      else {
-        this->functions[func - 1] = true;
-      }
+    void SetFunc(uint8_t func) {
+      this->functions[func] = true;
     }
-    void ClearFunc(int func) {
-      if (func == 0) {
-        this->fL = false;
-      }
-      else {
-        this->functions[func - 1] = false;
-      }
-    }
-    bool ToggleFunc(int func) {
-      if (func == 0) {
-        this->fL ^= true;
-        return this->fL;
-      }
-      else {
-        this->functions[func - 1] ^= true;
-        return this->functions[func - 1];
-      }
+    
+    void ClearFunc(uint8_t func) {
+      this->functions[func] = false;
     }
 
-    int GetAddress() {
+    bool ToggleFunc(uint8_t func) {
+      this->functions[func ] ^= true;
+      return this->functions[func];
+    }
+
+    uint8_t GetAddress() {
       return this->address;
-    }
-
-    String toString(){
-      String s = "Address:" + String(address) + ", Speed: " + String(speedStep)
-      +", Funcs: "+  String(functions[0])+String(functions[1])+String(functions[2])+String(functions[3])+String(functions[4]);
-      return s;
     }
 };
 

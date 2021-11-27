@@ -1,6 +1,7 @@
 #ifndef DCC_Packet_Generator_cpp
 #define DCC_Packet_Generator_cpp
 
+#include <stdint.h>
 #include "Decoder.cpp"
 #include "Packet.h"
 
@@ -9,21 +10,21 @@
 
 class DCC_Packet_Generator {
   public:
-    static Packet getSpeedMessage(Decoder decoder) {
+    static Packet getSpeedPacket(Decoder decoder) {
       // Advanced Operations Instruction (001)
       // 128 Speed Step Control
-      //  { { locoAdr, 0x3F,  0, 0, 0, 0, 0}, 4},
+      // This instruction has the format 001CCCCC 0 DDDDDDDD
+      // CCCCC = 11111 for 128 Speed Step Control
+      // D:7 = 1 for forward, 0 for reverse
+      // D:0-6 = 0000000 for stop, 0000001 for emergency stop.
       unsigned char data;
 
       Packet m;
-      m.len = 4;
+      m.len = 4; // 1 address byte, 2 instruction bytes and 1 error control byte
       m.data[0] = decoder.GetAddress();
       m.data[1] = 0x3F;
 
-      int speedStep = decoder.speedStep;
-      if (speedStep == 1)  {  // this would result in emergency stop
-        speedStep = 0;
-      }
+      uint8_t speedStep = decoder.speedStep;
 
       data = (decoder.dir) ? 0x80 : 0x00;
       data |=  speedStep;
@@ -37,7 +38,7 @@ class DCC_Packet_Generator {
       return m;
     }
 
-    static Packet getFunctionGroup1Message(Decoder decoder) {
+    static Packet getFunctionGroup1Packet(Decoder decoder) {
       // Function Group One Instruction (100)
       // F1 to F4 and FL
       Packet m;
@@ -45,11 +46,11 @@ class DCC_Packet_Generator {
       m.data[0] = decoder.GetAddress();
       unsigned char data = 0x80;
 
-      data |=  decoder.functions[0] << 0;
-      data |=  decoder.functions[1] << 1;
-      data |=  decoder.functions[2] << 2;
-      data |=  decoder.functions[3] << 3;
-      data |=  decoder.fL << 4;
+      data |=  decoder.functions[1] << 0; // F1
+      data |=  decoder.functions[2] << 1; // F2
+      data |=  decoder.functions[3] << 2; // F3
+      data |=  decoder.functions[4] << 3; // F4
+      data |=  decoder.functions[0] << 4; // FL
 
       m.data[1] = data;
       m.data[2] = (m.data[0] ^ data) ;
@@ -58,7 +59,7 @@ class DCC_Packet_Generator {
       return m;
     }
 
-    static Packet getFunctionGroup2Message1(Decoder decoder) {
+    static Packet getFunctionGroup2_1Packet(Decoder decoder) {
       // Function Group Two Instruction (101)
       // F5 to F8
       // This instruction has the format 101SDDDD, S = 1
@@ -67,18 +68,18 @@ class DCC_Packet_Generator {
       m.data[0] = decoder.GetAddress();
       unsigned char data = 0xB0;
 
-      data |=  decoder.functions[4] << 0;
-      data |=  decoder.functions[5] << 1;
-      data |=  decoder.functions[6] << 2;
-      data |=  decoder.functions[7] << 3;
+      data |=  decoder.functions[5] << 0;
+      data |=  decoder.functions[6] << 1;
+      data |=  decoder.functions[7] << 2;
+      data |=  decoder.functions[8] << 3;
 
       m.data[1] = data;
       m.data[2] = (m.data[0] ^ data) ;
 
-      m.type = Packet::Type::FG2I1;
+      m.type = Packet::Type::FG2I_F5F8;
       return m;
     }
-    static Packet getFunctionGroup2Message2(Decoder decoder) {
+    static Packet getFunctionGroup2_2Packet(Decoder decoder) {
       // Function Group Two Instruction (101)
       // F9 to F12
       // This instruction has the format 101SDDDD, S = 0
@@ -87,19 +88,19 @@ class DCC_Packet_Generator {
       m.data[0] = decoder.GetAddress();
       unsigned char data = 0xA0;
 
-      data |=  decoder.functions[8] << 0;
-      data |=  decoder.functions[9] << 1;
-      data |=  decoder.functions[10] << 2;
-      data |=  decoder.functions[11] << 3;
+      data |=  decoder.functions[9] << 0;
+      data |=  decoder.functions[10] << 1;
+      data |=  decoder.functions[11] << 2;
+      data |=  decoder.functions[12] << 3;
 
       m.data[1] = data;
       m.data[2] = (m.data[0] ^ data) ;
 
-      m.type = Packet::Type::FG2I2;
+      m.type = Packet::Type::FG2I_F9F12;
       return m;
     }
 
-    static Packet getFeatureExpansionF13F20Message(Decoder decoder) {
+    static Packet getFeatureExpansionF13F20Packet(Decoder decoder) {
       // Feature Expansion Instruction (110)
       // F13 to F20
       // Two byte instructions: 110CCCCC 0 DDDDDDDD
@@ -110,14 +111,37 @@ class DCC_Packet_Generator {
       m.data[1] = 0xDE;
       unsigned char data = 0x00;
 
-      for (int i = 0; i < 8; i++) {
-        data |=  decoder.functions[12 + i] << i;
+      for (uint8_t i = 0; i < 8; i++) {
+        data |=  decoder.functions[13 + i] << i;
       }
       
       m.data[2] = data;
       m.data[3] = (m.data[0] ^ m.data[1]) ^ data ;
 
-      m.type = Packet::Type::FEI;
+      m.type = Packet::Type::FEI_F13F20;
+      return m;
+    }
+
+    // Not yet tested
+    static Packet getFeatureExpansionF21F28Packet(Decoder decoder) {
+      // Feature Expansion Instruction (110)
+      // F21 to F28
+      // Two byte instructions: 110CCCCC 0 DDDDDDDD
+      // CCCCC = 11111
+      Packet m;
+      m.len = 4;
+      m.data[0] = decoder.GetAddress();
+      m.data[1] = 0xDF;
+      unsigned char data = 0x00;
+
+      for (uint8_t i = 0; i < 8; i++) {
+        data |=  decoder.functions[21 + i] << i;
+      }
+      
+      m.data[2] = data;
+      m.data[3] = (m.data[0] ^ m.data[1]) ^ data ;
+
+      m.type = Packet::Type::FEI_F21F28;
       return m;
     }
 

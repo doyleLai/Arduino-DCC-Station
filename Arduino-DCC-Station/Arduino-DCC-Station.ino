@@ -3,16 +3,16 @@
 #include "DCC_Controller.h"
 
 bool isStarted = false;
-int inChar;
+char inChar;
 String inString = "";    // string to hold input
+bool result;
 
 void setup(void) {
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
-  pinMode(11, OUTPUT);
-  pinMode(12, OUTPUT);
+
   DCC.DCC_begin();
 }
 
@@ -26,8 +26,9 @@ void loop(void) {
       inString = "";
     }
     else if (inChar == '>'){
-      Serial.println(inString);
-      DCC.processFrame(inString);
+      Serial.print(inString + " ");
+      result = DCC.processCommand(inString);
+      Serial.println(result? "ok":"error");
       isStarted = false;
     }
     else if (isStarted){

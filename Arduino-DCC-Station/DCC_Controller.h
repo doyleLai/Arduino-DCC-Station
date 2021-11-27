@@ -1,7 +1,7 @@
 #ifndef DCC_Controller_h
 #define DCC_Controller_h
 
-#include "Msgs_Pool.h"
+#include "Packets_Pool.h"
 #include "Decoder.cpp"
 #include "Packet.h"
 
@@ -10,22 +10,22 @@
 //void SetupTimer2();
 class DCC_Controller{
   private:
-    Msgs_Pool * pool;
+    Packets_Pool * pool;
     Decoder decoders[MAX_DECODERS];
-    int decoderCount ;
+    uint8_t decoderCount ;
 
   public:
     DCC_Controller();
-    DCC_Controller(Msgs_Pool * pool);
+    //DCC_Controller(Msgs_Pool * pool);
     void DCC_begin();
-    int getDecoderIndex(int address);
-    void processFrame(String frame);
-    void CmdSpeed(String frame);
-    void CmdFunction(String frame);
-    void CmdEmergencyStop();
-    void CmdRelease();
-    void CmdChangeCV();
-    Packet getNextMsg();
+    uint8_t getDecoderIndex(uint8_t address);
+    bool processCommand(String frame);
+    bool CmdSpeed(String frame);
+    bool CmdFunction(String frame);
+    bool CmdEmergencyStop();
+    bool CmdRelease();
+    bool CmdChangeCV();
+    Packet getNextPacket();
 };
 
 extern DCC_Controller DCC;
