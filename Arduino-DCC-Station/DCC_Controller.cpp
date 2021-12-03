@@ -9,27 +9,38 @@
 #include "Packet.h"
 #include "Packets_Pool.h"
 
+static void SetupPins();
+static inline void Drive0();
+static inline void Drive1();
+static void SetupTimer();
+
+static void handle_interrupt(volatile uint8_t & TCNTx);
+
+
+// Defines long pulse or short pulse should be sent.
+typedef enum {
+  Preamble, // short pulse
+  Seperator, // long pulse
+  SendByte // depends on the out bit.
+} DCC_pulse_state_t;
+
+#if defined(__AVR_ATmega328P__)
+
 //Timer frequency is 2MHz for ( /8 prescale from 16MHz )
 #define TIMER_SHORT 140  // 58usec pulse length
 #define TIMER_LONG 56   // 100usec pulse length
-
-// definitions for state machine
-typedef enum {
-  Preamble,
-  Seperator,
-  SendByte
-} DCC_signal_state_t;
-
 
 // DCC Output Pins: pin 11 (PB.3) and 12 (PB.4)
 static void SetupPins(){
   pinMode(11, OUTPUT);
   pinMode(12, OUTPUT);
 }
+
 static inline void Drive0(){
   PORTB |= (1 << 3);
   PORTB &= ~(1 << 4);
 }
+
 static inline void Drive1(){
   PORTB |= (1 << 4);
   PORTB &= ~(1 << 3);
@@ -38,7 +49,7 @@ static inline void Drive1(){
 //Setup Timer2.
 //Configures the 8-Bit Timer2 to generate an interrupt at the specified frequency.
 //Returns the time load value which must be loaded into TCNT2 inside your ISR routine.
-static void SetupTimer2() {
+static void SetupTimer() {
   //Timer2 Settings: Timer Prescaler /8, mode 0
   //Timmer clock = 16MHz/8 = 2MHz oder 0,5usec
   TCCR2A = 0;
@@ -51,8 +62,19 @@ static void SetupTimer2() {
   TCNT2 = TIMER_SHORT;
 }
 
+//Timer2 overflow interrupt vector handler
+ISR(TIMER2_OVF_vect) {
+  handle_interrupt(TCNT2);
+}
+
+#else
+#error "Unsupported hardware"
+#endif
+
+
+
 static void handle_interrupt(volatile uint8_t & TCNTx){
-  static DCC_signal_state_t current_state = Preamble;
+  static DCC_pulse_state_t current_state = Preamble;
   static uint8_t timerValue = TIMER_SHORT;  // store last timer value
   //static unsigned char flag = 0;              // used for short or long pulse
   static bool isSecondPulse = false;
@@ -61,6 +83,7 @@ static void handle_interrupt(volatile uint8_t & TCNTx){
   static unsigned char cbit = 0x80;
   static uint8_t byteIndex = 0;
   static Packet cachedMsg = { { 0xFF, 0x00, 0xFF, 0, 0, 0 }, 3 };
+  static Packet resetPkt = { { 0x00, 0x00, 0x00, 0, 0, 0 }, 3 };
   static uint8_t latency;
   //Capture the current timer value TCTN2. This is how much error we have
   //due to interrupt latency and the work in this function
@@ -87,7 +110,12 @@ static void handle_interrupt(volatile uint8_t & TCNTx){
           // preamble completed, get next message
           current_state = Seperator;
           byteIndex = 0;  //start msg with byte 0
-          cachedMsg = DCC.getNextPacket();
+          if (DCC.getSignalState()== SendPacket){
+            cachedMsg = DCC.getNextPacket();
+          }
+          else{
+            cachedMsg = resetPkt;
+          }
         }
         break;
       case Seperator:
@@ -124,12 +152,11 @@ static void handle_interrupt(volatile uint8_t & TCNTx){
   }
 }
 
-//Timer2 overflow interrupt vector handler
-ISR(TIMER2_OVF_vect) {
-  handle_interrupt(TCNT2);
-}
 
 DCC_Controller::DCC_Controller() {
+  this->pool = new Packets_Pool();
+  decoderCount = 0;
+  signal_state = Startup;
 }
 
 /*
@@ -140,10 +167,9 @@ DCC_Controller::DCC_Controller(Msgs_Pool * pool){
 }
 */
 void DCC_Controller::DCC_begin() {
-  this->pool = new Packets_Pool();
-  decoderCount = 0;
+
   SetupPins();
-  SetupTimer2();
+  SetupTimer();
   Serial.println("DCC_begin");
 }
 
@@ -199,6 +225,9 @@ bool DCC_Controller::processCommand(String frame) {
       isValid = CmdRelease();
     case 'C':
       isValid = CmdChangeCV();
+  }
+  if (signal_state == Startup){
+    signal_state = SendPacket;
   }
   return isValid;
 }
@@ -283,6 +312,10 @@ bool DCC_Controller::CmdChangeCV() {
   Packet m = DCC_Packet_Generator::getConfigurationVariableAccessInstructionPacket(0x03, 1, 0x05);
   pool->fill(m);
   return true;
+}
+
+DCC_signal_state_t DCC_Controller::getSignalState(){
+  return signal_state;
 }
 
 Packet DCC_Controller::getNextPacket() {

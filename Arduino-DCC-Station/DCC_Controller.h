@@ -7,12 +7,20 @@
 
 #define MAX_DECODERS 10
 
+// Defines which type of packet should be cached for output
+typedef enum {
+  Startup, // When power up, send reset packet
+  SendPacket, // Send packets from the packets pool
+} DCC_signal_state_t;
+
+
 //void SetupTimer2();
 class DCC_Controller{
   private:
     Packets_Pool * pool;
     Decoder decoders[MAX_DECODERS];
     uint8_t decoderCount ;
+    DCC_signal_state_t signal_state;
 
   public:
     DCC_Controller();
@@ -25,6 +33,7 @@ class DCC_Controller{
     bool CmdEmergencyStop();
     bool CmdRelease();
     bool CmdChangeCV();
+    DCC_signal_state_t getSignalState();
     Packet getNextPacket();
 };
 
