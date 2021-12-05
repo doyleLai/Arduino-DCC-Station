@@ -26,8 +26,8 @@ typedef enum {
 #if defined(__AVR_ATmega328P__)
 
 //Timer frequency is 2MHz for ( /8 prescale from 16MHz )
-#define TIMER_SHORT 112  // 58usec pulse length
-#define TIMER_LONG 196   // 100usec pulse length
+#define TIMER_SHORT 116  // 58usec pulse length
+#define TIMER_LONG 200  // 100usec pulse length
 
 // DCC Output Pins: pin 11 (PB.3) and 12 (PB.4)
 static void SetupPins(){
@@ -45,9 +45,7 @@ static inline void Drive1(){
   PORTB &= ~(1 << 3);
 }
 
-//Setup Timer2.
-//Configures the 8-Bit Timer2 to generate an interrupt at the specified frequency.
-//Returns the time load value which must be loaded into TCNT2 inside your ISR routine.
+// Uses Timer2.
 static void SetupTimer() {
   // Normal Mode, OC2A OC2B disconnected. clk / 8 prescaler
   TCCR2A = 0x00; 
@@ -66,8 +64,6 @@ ISR(TIMER2_COMPA_vect) {
 #error "Unsupported hardware"
 #endif
 
-
-
 static void handle_interrupt(volatile uint8_t & TCNTx, volatile uint8_t & OCRx){
   static DCC_pulse_state_t current_state = Preamble;
   static uint8_t timerValue = TIMER_SHORT;  // store last timer value
@@ -79,21 +75,14 @@ static void handle_interrupt(volatile uint8_t & TCNTx, volatile uint8_t & OCRx){
   static uint8_t byteIndex = 0;
   static Packet cachedMsg = DCC_Packet_Generator::getDigitalDecoderIdlePacket();
   static Packet resetPkt = DCC_Packet_Generator::getDigitalDecoderResetPacket();
-  //static uint8_t latency;
-  //Capture the current timer value TCTN2. This is how much error we have
-  //due to interrupt latency and the work in this function
-  //Reload the timer and correct for latency.
-  // for more info, see http://www.uchobby.com/index.php/2007/11/24/arduino-interrupts/
 
   // for every second interupt just toggle signal
   if (isSecondPulse) {
     Drive1();
     isSecondPulse = false;
     // set timer to last value
-    //latency = TCNTx;
-    OCRx = TCNTx + timerValue;
-    //TCNTx = latency + timerValue;
-  
+    OCRx = OCRx + timerValue;
+
   } else {  // != every second interrupt, advance bit or state
     Drive0();
     isSecondPulse = true;
@@ -142,10 +131,7 @@ static void handle_interrupt(volatile uint8_t & TCNTx, volatile uint8_t & OCRx){
         }
         break;
     }
-    
-    //latency = TCNTx;
-    //TCNTx = latency + timerValue;
-    OCRx = TCNTx + timerValue;
+    OCRx = OCRx + timerValue;
   }
 }
 
@@ -250,7 +236,7 @@ bool DCC_Controller::CmdSpeed(String frame) {
 
   Packet m = DCC_Packet_Generator::getSpeedPacket(*d);
 
-  pool->add(decoderIndex * 5 + m.type, m);
+  pool->add(decoderIndex, m);
 
   return true;
 }
@@ -290,7 +276,7 @@ bool DCC_Controller::CmdFunction(String frame) {
     m = DCC_Packet_Generator::getFeatureExpansionF13F20Packet(*d);
   }
 
-  pool->add(decoderIndex * 5 + m.type, m);
+  pool->add(decoderIndex, m);
   
   return true;
 }
