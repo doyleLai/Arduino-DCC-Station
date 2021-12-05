@@ -14,8 +14,7 @@ static inline void Drive0();
 static inline void Drive1();
 static void SetupTimer();
 
-static void handle_interrupt(volatile uint8_t & TCNTx);
-
+static void handle_interrupt(volatile uint8_t & TCNTx, volatile uint8_t & OCRx);
 
 // Defines long pulse or short pulse should be sent.
 typedef enum {
@@ -27,8 +26,8 @@ typedef enum {
 #if defined(__AVR_ATmega328P__)
 
 //Timer frequency is 2MHz for ( /8 prescale from 16MHz )
-#define TIMER_SHORT 140  // 58usec pulse length
-#define TIMER_LONG 56   // 100usec pulse length
+#define TIMER_SHORT 112  // 58usec pulse length
+#define TIMER_LONG 196   // 100usec pulse length
 
 // DCC Output Pins: pin 11 (PB.3) and 12 (PB.4)
 static void SetupPins(){
@@ -50,21 +49,17 @@ static inline void Drive1(){
 //Configures the 8-Bit Timer2 to generate an interrupt at the specified frequency.
 //Returns the time load value which must be loaded into TCNT2 inside your ISR routine.
 static void SetupTimer() {
-  //Timer2 Settings: Timer Prescaler /8, mode 0
-  //Timmer clock = 16MHz/8 = 2MHz oder 0,5usec
-  TCCR2A = 0;
-  TCCR2B = 0 << CS22 | 1 << CS21 | 0 << CS20;
+  // Normal Mode, OC2A OC2B disconnected. clk / 8 prescaler
+  TCCR2A = 0x00; 
+  TCCR2B = 0x00 | (1 << CS21); 
+  TIMSK2 = 0x00 | (1 << OCIE2A); // Compare Match A interrupt enabled
 
-  //Timer2 Overflow Interrupt Enable
-  TIMSK2 = 1 << TOIE2;
-
-  //load the timer for its first cycle
-  TCNT2 = TIMER_SHORT;
+  OCR2A = TIMER_SHORT;
+  TCNT2 = 0;
 }
 
-//Timer2 overflow interrupt vector handler
-ISR(TIMER2_OVF_vect) {
-  handle_interrupt(TCNT2);
+ISR(TIMER2_COMPA_vect) {
+  handle_interrupt(TCNT2, OCR2A);
 }
 
 #else
@@ -73,7 +68,7 @@ ISR(TIMER2_OVF_vect) {
 
 
 
-static void handle_interrupt(volatile uint8_t & TCNTx){
+static void handle_interrupt(volatile uint8_t & TCNTx, volatile uint8_t & OCRx){
   static DCC_pulse_state_t current_state = Preamble;
   static uint8_t timerValue = TIMER_SHORT;  // store last timer value
   //static unsigned char flag = 0;              // used for short or long pulse
@@ -82,9 +77,9 @@ static void handle_interrupt(volatile uint8_t & TCNTx){
   static unsigned char outbyte = 0;
   static unsigned char cbit = 0x80;
   static uint8_t byteIndex = 0;
-  static Packet cachedMsg = { { 0xFF, 0x00, 0xFF, 0, 0, 0 }, 3 };
-  static Packet resetPkt = { { 0x00, 0x00, 0x00, 0, 0, 0 }, 3 };
-  static uint8_t latency;
+  static Packet cachedMsg = DCC_Packet_Generator::getDigitalDecoderIdlePacket();
+  static Packet resetPkt = DCC_Packet_Generator::getDigitalDecoderResetPacket();
+  //static uint8_t latency;
   //Capture the current timer value TCTN2. This is how much error we have
   //due to interrupt latency and the work in this function
   //Reload the timer and correct for latency.
@@ -95,8 +90,9 @@ static void handle_interrupt(volatile uint8_t & TCNTx){
     Drive1();
     isSecondPulse = false;
     // set timer to last value
-    latency = TCNTx;
-    TCNTx = latency + timerValue;
+    //latency = TCNTx;
+    OCRx = TCNTx + timerValue;
+    //TCNTx = latency + timerValue;
   
   } else {  // != every second interrupt, advance bit or state
     Drive0();
@@ -147,8 +143,9 @@ static void handle_interrupt(volatile uint8_t & TCNTx){
         break;
     }
     
-    latency = TCNTx;
-    TCNTx = latency + timerValue;
+    //latency = TCNTx;
+    //TCNTx = latency + timerValue;
+    OCRx = TCNTx + timerValue;
   }
 }
 
