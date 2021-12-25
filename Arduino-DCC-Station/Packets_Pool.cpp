@@ -1,5 +1,5 @@
 #include <avr/interrupt.h>
-#include "DCC_Packet_Generator.cpp"
+#include "DCC_Packet_Generator.h"
 #include "Packet.h"
 #include "Packets_Pool.h"
 

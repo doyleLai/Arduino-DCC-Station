@@ -1,7 +1,7 @@
 #ifndef Packets_Pool_h
 #define Packets_Pool_h
 
-#include "DCC_Packet_Generator.cpp"
+#include "DCC_Packet_Generator.h"
 #include "Packet.h"
 #define PRIORITY_POOL_SIZE 20
 #define REPETITIVE_POOL_SIZE 60

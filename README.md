@@ -1,10 +1,12 @@
 # Arduino-DCC-Station
-This project was adapted from Michael Blank's work. The original program supports one decoder only. This program aims to support up to 9 decoders.
+This project adapted Michael Blank's program code for signal generation. The original program supports one decoder only. This program supports up to 9 decoders.
 
-## Hardware
-You need an H-bridge motor driver to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track and locomotives directly. To set up the circuit, connect the pin 11 and 12 on Arduino to the two input pins on your H-bridge. Connect the two output pins on the H-bridge to the track.
+The Arduino program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
 
-This program was tested on Arduino UNO Rev3 and should work on other ATmega328p boards.
+The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal. Therefore, this program is compatible with Arduino UNO and other ATmega328p based boards only.
+
+## Hardware wiring
+Connect the pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Connect the two output pins of the H-bridge to the track. Be sure you use an H-bridge to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track and locomotives directly. 
 
 >If you use a non-isolated oscilloscope to measure the output pulses on Arduino or the motor driver, attach the probe tip only. Never connect the ground lead of a non-isolated oscilloscope to any signal pin.
 

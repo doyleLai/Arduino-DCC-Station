@@ -1,16 +1,13 @@
-#ifndef DCC_Packet_Generator_cpp
-#define DCC_Packet_Generator_cpp
-
+#include "DCC_Packet_Generator.h"
 #include <stdint.h>
-#include "Decoder.cpp"
+#include "Decoder.h"
 #include "Packet.h"
 
 // Check out the DCC packet format from this website.
 // https://www.nmra.org/sites/default/files/s-9.2.1_2012_07.pdf
 
-class DCC_Packet_Generator {
-  public:
-    static Packet getSpeedPacket(Decoder decoder) {
+
+Packet DCC_Packet_Generator::getSpeedPacket(Decoder decoder) {
       // Advanced Operations Instruction (001)
       // 128 Speed Step Control
       // This instruction has the format 001CCCCC 0 DDDDDDDD
@@ -36,9 +33,9 @@ class DCC_Packet_Generator {
 
       m.type = Packet::Type::AOI;
       return m;
-    }
+    };
 
-    static Packet getFunctionGroup1Packet(Decoder decoder) {
+Packet DCC_Packet_Generator::getFunctionGroup1Packet(Decoder decoder) {
       // Function Group One Instruction (100)
       // F1 to F4 and FL
       Packet m;
@@ -59,7 +56,7 @@ class DCC_Packet_Generator {
       return m;
     }
 
-    static Packet getFunctionGroup2_1Packet(Decoder decoder) {
+Packet DCC_Packet_Generator::getFunctionGroup2_1Packet(Decoder decoder) {
       // Function Group Two Instruction (101)
       // F5 to F8
       // This instruction has the format 101SDDDD, S = 1
@@ -79,7 +76,7 @@ class DCC_Packet_Generator {
       m.type = Packet::Type::FG2I_F5F8;
       return m;
     }
-    static Packet getFunctionGroup2_2Packet(Decoder decoder) {
+Packet DCC_Packet_Generator::getFunctionGroup2_2Packet(Decoder decoder) {
       // Function Group Two Instruction (101)
       // F9 to F12
       // This instruction has the format 101SDDDD, S = 0
@@ -100,7 +97,7 @@ class DCC_Packet_Generator {
       return m;
     }
 
-    static Packet getFeatureExpansionF13F20Packet(Decoder decoder) {
+Packet DCC_Packet_Generator::getFeatureExpansionF13F20Packet(Decoder decoder) {
       // Feature Expansion Instruction (110)
       // F13 to F20
       // Two byte instructions: 110CCCCC 0 DDDDDDDD
@@ -123,7 +120,7 @@ class DCC_Packet_Generator {
     }
 
     // Not yet tested
-    static Packet getFeatureExpansionF21F28Packet(Decoder decoder) {
+Packet DCC_Packet_Generator::getFeatureExpansionF21F28Packet(Decoder decoder) {
       // Feature Expansion Instruction (110)
       // F21 to F28
       // Two byte instructions: 110CCCCC 0 DDDDDDDD
@@ -145,7 +142,7 @@ class DCC_Packet_Generator {
       return m;
     }
 
-    static Packet getDigitalDecoderResetPacket() {
+Packet DCC_Packet_Generator::getDigitalDecoderResetPacket() {
       // Digital Decoder Reset Packet For All Decoders
       // erase all volatile memory (including any speed and direction data)
       // bring the locomotive to an immediate stop
@@ -159,7 +156,7 @@ class DCC_Packet_Generator {
       return m;
     }
 
-    static Packet getDigitalDecoderIdlePacket() {
+Packet DCC_Packet_Generator::getDigitalDecoderIdlePacket() {
       // Digital Decoder Idle Packet For All Decoders
       // Digital Decoders shall perform no new action
       // { { 0xFF, 0, 0xFF, 0, 0, 0, 0}, 3},
@@ -174,7 +171,7 @@ class DCC_Packet_Generator {
 
 
     
-    static Packet getConfigurationVariableAccessInstructionPacket(int address, unsigned int cv, int data) {
+Packet DCC_Packet_Generator::getConfigurationVariableAccessInstructionPacket(int address, unsigned int cv, int data) {
       // Configuration Variable Access Instruction (111) 
       // Configuration Variable Access Instruction - Long Form 
       // 1110CCVV 0 VVVVVVVV 0 DDDDDDDD 
@@ -193,7 +190,4 @@ class DCC_Packet_Generator {
       m.data[4] = m.data[0] ^ m.data[1] ^ m.data[2] ^ m.data[3];
       return m;
     }
-};
 
-
-#endif

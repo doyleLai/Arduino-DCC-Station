@@ -1,8 +1,9 @@
 #ifndef DCC_Controller_h
 #define DCC_Controller_h
 
+#include <Arduino.h>
 #include "Packets_Pool.h"
-#include "Decoder.cpp"
+#include "Decoder.h"
 #include "Packet.h"
 
 #define MAX_DECODERS 10
