@@ -4,7 +4,7 @@ This project adapted Michael Blank's [program code](http://www.oscale.net/en/sim
 The Arduino program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
 
 ## Board Compatibility
-The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal.
+The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal. Not all Arduino boards are supported.
 
 Supported boards:
 - Arduino UNO (Other ATmega328p based boards may be supported)
