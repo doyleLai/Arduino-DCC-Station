@@ -1,5 +1,5 @@
 # Arduino-DCC-Station
-This project adapted Michael Blank's [program code](http://www.oscale.net/en/simpledcc) for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides command controls on the serial port.
+This project adapted Michael Blank's [program code](http://www.oscale.net/en/simpledcc) for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides command controls interface on the serial port.
 
 The Arduino program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
 
