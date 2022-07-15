@@ -1,5 +1,5 @@
 # Arduino-DCC-Station
-This project adapted Michael Blank's [program code](http://www.oscale.net/en/simpledcc) for signal generation. The original program supports one decoder only. This program supports up to 9 decoders.
+This project adapted Michael Blank's [program code](http://www.oscale.net/en/simpledcc) for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides command controls on the serial port.
 
 The Arduino program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
 
@@ -21,7 +21,7 @@ Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Conn
 5. Open Serial Monitor and send control messages (see below) to control your locos. 
 
 ## Control Messages
-The program continuously reads control messages from the USB serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system can re-generate DCC messages for all locomotives periodically without the need of repetitive control messages.
+The program reads control messages from the USB serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system will output DCC messages to all locomotives periodically without the need of repetitive control messages.
 
 ### Message format
 Each message is enclosed by "<>" and has the following format:
@@ -40,7 +40,7 @@ Sets the speed of address 3 decoder to forward direction and speed step 5.
 ```
 <S31005>
 ```
-* Type (T): S
+* Type: S
 * Address (A): 3
 * Payload
   * Direction (D): 1
@@ -58,7 +58,7 @@ Turns ON the F2 of address 3 decoder.
 ```
 <F3021>
 ```
-* Type (T): F
+* Type: F
 * Address (A): 3
 * Payload
   * Function (UU): 02
