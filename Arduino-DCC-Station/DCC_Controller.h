@@ -12,7 +12,9 @@
 typedef enum {
   Startup, // When power up, send reset packet
   SendPacket, // Send packets from the packets pool
-} DCC_signal_state_t;
+  EmergencyStop, // Set speed step of all trains to 0 in this state
+  CV // Chnage Configuration Variable (Not used)
+} DCC_control_state_t;
 
 
 //void SetupTimer2();
@@ -20,9 +22,10 @@ class DCC_Controller{
   private:
     Packets_Pool * pool;
     Decoder decoders[MAX_DECODERS];
-    uint8_t decoderCount ;
-    DCC_signal_state_t signal_state;
-
+    uint8_t decoderCount;
+    DCC_control_state_t control_state;
+    Packet resetPkt;
+    Packet stopPkt;
   public:
     DCC_Controller();
     //DCC_Controller(Msgs_Pool * pool);
@@ -34,7 +37,7 @@ class DCC_Controller{
     bool CmdEmergencyStop();
     bool CmdRelease();
     bool CmdChangeCV();
-    DCC_signal_state_t getSignalState();
+    //DCC_control_state_t getControlState();
     Packet getNextPacket();
 };
 

@@ -10,8 +10,10 @@
 
 DCC_Controller::DCC_Controller() {
   this->pool = new Packets_Pool();
-  decoderCount = 0;
-  signal_state = Startup;
+  this->decoderCount = (uint8_t) 0;
+  this->resetPkt = DCC_Packet_Generator::getDigitalDecoderResetPacket();
+  this->stopPkt = DCC_Packet_Generator::getDigitalDecoderBroadcastStopPacket();
+  this->control_state = Startup;
 }
 
 /*
@@ -78,11 +80,15 @@ bool DCC_Controller::processCommand(String frame) {
       break;
     case 'R':
       isValid = CmdRelease();
+      break;
     case 'C':
-      isValid = CmdChangeCV();
+      //isValid = CmdChangeCV();
+      break;
   }
-  if (signal_state == Startup){
-    signal_state = SendPacket;
+  if (control_state == Startup){
+    cli();
+    control_state = SendPacket;
+    sei();
   }
   return isValid;
 }
@@ -154,27 +160,59 @@ bool DCC_Controller::CmdFunction(String frame) {
 }
 
 bool DCC_Controller::CmdEmergencyStop() {
+  if (this->control_state!=EmergencyStop){
+    // The signal generator will send stop packet only in EmergencyStop state.
+    cli();
+    this->control_state = EmergencyStop;
+    sei();
+    // Set the speed steps of all decoders in packet pool to 0
+    // so trains will remain stationary after releasing EmergencyStop
+    for (uint8_t i = 0; i < decoderCount; i++) {
+      Decoder* _d = &this->decoders[i];
+      _d->speedStep = 0;
+      Packet m = DCC_Packet_Generator::getSpeedPacket(*_d);
+      pool->add(i, m);
+    }
+    return true;
+  }
   return false;
 }
 
 bool DCC_Controller::CmdRelease() {
+  // Release from EmergencyStop state.
+  if (this->control_state == EmergencyStop){
+    cli();
+    this->control_state = SendPacket;
+    sei();
+    return true;
+  }
   return false;
 }
 
 bool DCC_Controller::CmdChangeCV() {
   // you must reset the arduino after using this command.
-  // Otherwise, the repeated instruction frame will interfere other frames.
+  // Otherwise, the CV instruction packet will stay in the pool forever.
   Packet m = DCC_Packet_Generator::getConfigurationVariableAccessInstructionPacket(0x03, 1, 0x05);
   pool->fill(m);
   return true;
 }
 
-DCC_signal_state_t DCC_Controller::getSignalState(){
-  return signal_state;
+/*
+DCC_control_state_t DCC_Controller::getControlState(){
+  return control_state;
 }
-
+*/
 Packet DCC_Controller::getNextPacket() {
-  return pool->getNextPacket();
+  if (this->control_state == SendPacket){
+    return pool->getNextPacket();
+  }
+  else if (this->control_state == EmergencyStop){
+    return this->stopPkt;
+  }
+  else{
+    return this->resetPkt;
+  }
+  
 }
 
 DCC_Controller DCC;

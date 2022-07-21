@@ -75,12 +75,12 @@ static void handle_interrupt(volatile uint8_t & TCNTx, volatile uint8_t & OCRx){
           // preamble completed, get next message
           current_state = Seperator;
           byteIndex = 0;  //start msg with byte 0
-          if (DCC.getSignalState()== SendPacket){
+          //if (DCC.getControlState()== SendPacket){
             cachedMsg = DCC.getNextPacket();
-          }
-          else{
-            cachedMsg = resetPkt;
-          }
+          //}
+          //else{
+          //  cachedMsg = resetPkt;
+          //}
         }
         break;
       case Seperator:
@@ -185,12 +185,12 @@ static void handle_interrupt(volatile TCB_t & timer){
           // preamble completed, get next message
           current_state = Seperator;
           byteIndex = 0;  //start msg with byte 0
-          if (DCC.getSignalState()== SendPacket){
+          //if (DCC.getControlState()== SendPacket){
             cachedMsg = DCC.getNextPacket();
-          }
-          else{
-            cachedMsg = resetPkt;
-          }
+          //}
+          //else{
+          //  cachedMsg = resetPkt;
+          //}
         }
         break;
       case Seperator:

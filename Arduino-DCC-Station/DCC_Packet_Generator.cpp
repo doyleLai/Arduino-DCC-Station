@@ -146,7 +146,7 @@ Packet DCC_Packet_Generator::getDigitalDecoderResetPacket() {
       // Digital Decoder Reset Packet For All Decoders
       // erase all volatile memory (including any speed and direction data)
       // bring the locomotive to an immediate stop
-      // { { 0, 0, 0, 0, 0, 0, 0}, 3},
+      // { { 0, 0, 0, 0, 0, 0, 0}, 3}
       Packet m;
       m.len = 3;
       m.data[0] = 0x00;
@@ -159,12 +159,27 @@ Packet DCC_Packet_Generator::getDigitalDecoderResetPacket() {
 Packet DCC_Packet_Generator::getDigitalDecoderIdlePacket() {
       // Digital Decoder Idle Packet For All Decoders
       // Digital Decoders shall perform no new action
-      // { { 0xFF, 0, 0xFF, 0, 0, 0, 0}, 3},
+      // { { 0xFF, 0, 0xFF, 0, 0, 0, 0}, 3}
       Packet m;
       m.len = 3;
       m.data[0] = 0xFF;
       m.data[1] = 0x00;      
       m.data[2] = 0xFF;
+
+      return m;
+    }
+
+Packet DCC_Packet_Generator::getDigitalDecoderBroadcastStopPacket() {
+      // Digital Decoder Broadcast Stop Packets For All Decoders
+      // Digital Decoders shall stop delivering energy to the motor
+      // Three bytes packet: 00000000 0 01DC000S 0 EEEEEEEE
+      // S = 1, C = 1, D = 0, EEEEEEEE = Error Detection Data Byte
+      // { { 0x00, 0x51, 0x51, 0, 0, 0, 0}, 3}
+      Packet m;
+      m.len = 3;
+      m.data[0] = 0x00;
+      m.data[1] = 0x51;      
+      m.data[2] = 0x51;
 
       return m;
     }

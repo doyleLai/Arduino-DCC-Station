@@ -18,6 +18,7 @@ class DCC_Packet_Generator {
     static Packet getFeatureExpansionF21F28Packet(Decoder decoder);
     static Packet getDigitalDecoderResetPacket();
     static Packet getDigitalDecoderIdlePacket();
+    static Packet getDigitalDecoderBroadcastStopPacket();
     static Packet getConfigurationVariableAccessInstructionPacket(int address, unsigned int cv, int data);
 };
 
