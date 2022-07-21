@@ -72,7 +72,7 @@ Stop all locomotives. This message will instruct all digital decoders shall stop
 
 ### Type R - Release emergency stop
 ```
-<E>
+<R>
 ```
 Resume normal operation. Locomotives will remain stationary unless a new speed step is set. 
 
