@@ -11,7 +11,7 @@ Supported boards:
 - Arduino UNO WiFi Rev.2 (Other ATmega4809 based boards may be supported)
 
 ## Wiring
-Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Connect the two output pins of the H-bridge to the track. Be sure you use an H-bridge to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track and locomotives directly. 
+Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Connect the two output pins of the H-bridge to the track. Be sure you use an H-bridge to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track nor locomotives directly. 
 
 ## Installation
 1. Download and unzip the project.
@@ -21,7 +21,7 @@ Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Conn
 5. Open Serial Monitor and send control messages (see below) to control your locos. 
 
 ## Control Messages
-The program reads control messages from the USB serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system will output DCC messages to all locomotives periodically without the need of repetitive control messages.
+The program reads control messages from the default serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system will output DCC packets to all locomotives periodically without the need of repetitive control messages.
 
 ### Message format
 Each message is enclosed by "<>" and has the following format:
@@ -63,6 +63,19 @@ Turns ON the F2 of address 3 decoder.
 * Payload
   * Function (UU): 02
   * ON/OFF (E): 1
+  
+### Type E - Emergency stop
+```
+<E>
+```
+Stop all locomotives. This message will instruct all digital decoders shall stop delivering energy to the motor.
+
+### Type R - Release emergency stop
+```
+<E>
+```
+Resume normal operation. Locomotives will remain stationary unless a new speed step is set. 
+
 
 ## Disclaimer
 You should take your own risk to use anything in this project. The author of the project is not responsible for any damage, hurt, or other kinds of accident caused by the use of the program code and the suggested electronic components.
