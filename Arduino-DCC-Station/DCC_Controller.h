@@ -20,7 +20,7 @@ typedef enum {
 //void SetupTimer2();
 class DCC_Controller{
   private:
-    Packets_Pool * pool;
+    Packets_Pool pool;
     Decoder decoders[MAX_DECODERS];
     uint8_t decoderCount;
     DCC_control_state_t control_state;

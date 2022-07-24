@@ -9,7 +9,7 @@
 
 
 DCC_Controller::DCC_Controller() {
-  this->pool = new Packets_Pool();
+  this->pool = Packets_Pool();
   this->decoderCount = (uint8_t) 0;
   this->resetPkt = DCC_Packet_Generator::getDigitalDecoderResetPacket();
   this->stopPkt = DCC_Packet_Generator::getDigitalDecoderBroadcastStopPacket();
@@ -114,7 +114,7 @@ bool DCC_Controller::CmdSpeed(String frame) {
 
   Packet m = DCC_Packet_Generator::getSpeedPacket(*d);
 
-  pool->add(decoderIndex, m);
+  pool.add(decoderIndex, m);
 
   return true;
 }
@@ -154,7 +154,7 @@ bool DCC_Controller::CmdFunction(String frame) {
     m = DCC_Packet_Generator::getFeatureExpansionF13F20Packet(*d);
   }
 
-  pool->add(decoderIndex, m);
+  pool.add(decoderIndex, m);
   
   return true;
 }
@@ -171,7 +171,7 @@ bool DCC_Controller::CmdEmergencyStop() {
       Decoder* _d = &this->decoders[i];
       _d->speedStep = 0;
       Packet m = DCC_Packet_Generator::getSpeedPacket(*_d);
-      pool->add(i, m);
+      pool.add(i, m);
     }
     return true;
   }
@@ -193,7 +193,7 @@ bool DCC_Controller::CmdChangeCV() {
   // you must reset the arduino after using this command.
   // Otherwise, the CV instruction packet will stay in the pool forever.
   Packet m = DCC_Packet_Generator::getConfigurationVariableAccessInstructionPacket(0x03, 1, 0x05);
-  pool->fill(m);
+  pool.fill(m);
   return true;
 }
 
@@ -204,7 +204,7 @@ DCC_control_state_t DCC_Controller::getControlState(){
 */
 Packet DCC_Controller::getNextPacket() {
   if (this->control_state == SendPacket){
-    return pool->getNextPacket();
+    return pool.getNextPacket();
   }
   else if (this->control_state == EmergencyStop){
     return this->stopPkt;

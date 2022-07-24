@@ -8,7 +8,7 @@
 
 class Packets_Pool{
 private:
-  Packet priorityPool[REPETITIVE_POOL_SIZE];
+  Packet priorityPool[PRIORITY_POOL_SIZE];
   Packet repetitivePool[REPETITIVE_POOL_SIZE];
   uint8_t priorityAddPointer;
   uint8_t priorityFetchPointer;
