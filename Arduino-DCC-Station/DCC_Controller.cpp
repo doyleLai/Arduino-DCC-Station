@@ -24,7 +24,6 @@ DCC_Controller::DCC_Controller(Msgs_Pool * pool){
 }
 */
 void DCC_Controller::DCC_begin() {
-
   SetupPins();
   SetupTimer();
   Serial.println("DCC_begin");

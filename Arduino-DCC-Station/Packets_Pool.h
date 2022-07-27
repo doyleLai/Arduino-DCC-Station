@@ -3,7 +3,7 @@
 
 #include "DCC_Packet_Generator.h"
 #include "Packet.h"
-#define PRIORITY_POOL_SIZE 20
+#define PRIORITY_POOL_SIZE 10
 #define REPETITIVE_POOL_SIZE 60
 
 class Packets_Pool{
