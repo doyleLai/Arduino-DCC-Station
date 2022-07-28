@@ -37,6 +37,7 @@ class DCC_Controller{
     bool CmdEmergencyStop();
     bool CmdRelease();
     bool CmdChangeCV();
+    bool CmdReset(String frame);
     //DCC_control_state_t getControlState();
     Packet getNextPacket();
 };

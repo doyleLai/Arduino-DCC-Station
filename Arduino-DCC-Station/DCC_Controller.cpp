@@ -7,6 +7,9 @@
 #include "Packet.h"
 #include "Packets_Pool.h"
 
+#if defined(__AVR__)
+#include <avr/wdt.h>
+#endif
 
 DCC_Controller::DCC_Controller() {
   this->pool = Packets_Pool();
@@ -82,6 +85,9 @@ bool DCC_Controller::processCommand(String frame) {
       break;
     case 'C':
       //isValid = CmdChangeCV();
+      break;
+    case 'W':
+      isValid = CmdReset(frame);
       break;
   }
   if (control_state == Startup){
@@ -194,6 +200,14 @@ bool DCC_Controller::CmdChangeCV() {
   Packet m = DCC_Packet_Generator::getConfigurationVariableAccessInstructionPacket(0x03, 1, 0x05);
   pool.fill(m);
   return true;
+}
+
+bool DCC_Controller::CmdReset(String frame){
+#if defined(__AVR__)
+  wdt_enable(WDTO_15MS);
+  return true;
+#endif
+  return false;
 }
 
 /*
