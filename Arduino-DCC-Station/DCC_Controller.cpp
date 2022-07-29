@@ -69,7 +69,7 @@ uint8_t DCC_Controller::getDecoderIndex(uint8_t address) {
 bool DCC_Controller::processCommand(char msg[]) {
   //Serial.println("Receieved Frame");
   char firstChar = msg[0];
-  bool isValid;
+  bool isValid = false;
   switch (firstChar) {
     case 'S':
       isValid = CmdSpeed(msg);

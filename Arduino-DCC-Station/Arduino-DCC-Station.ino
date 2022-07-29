@@ -3,10 +3,8 @@
 #include "DCC_Controller.h"
 #define INPUT_LEN_MAX 10
 bool isStarted = false;
-//char inChar;
 char inString[INPUT_LEN_MAX];
 uint8_t inPos = 0;
-//String inString = "";    // string to hold input
 bool result;
 
 void setup(void) {
@@ -19,20 +17,17 @@ void setup(void) {
 }
 
 void loop(void) {
-  //delay(1);
   while (Serial.available()) {
     char inChar = Serial.read();
-    //Serial.println("R");
     if (inChar == '<'){
       isStarted = true;
       inPos = 0;
-      //inString[inPos++] = inChar;
     }
     else if (inChar == '>' && isStarted){
       inString[inPos] = '\0';
-      Serial.println(inString);
       result = DCC.processCommand(inString);
-      //Serial.println(result? "ok":"error");
+      Serial.print(inString);
+      Serial.println(result? " ok" : " error");
       isStarted = false;
       inString[0] = '\0';
     }
