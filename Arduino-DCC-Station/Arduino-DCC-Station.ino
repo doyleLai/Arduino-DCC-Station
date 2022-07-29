@@ -1,10 +1,12 @@
 // This project is available on https://github.com/doyleLai/Arduino-DCC-Station
 
 #include "DCC_Controller.h"
-
+#define INPUT_LEN_MAX 10
 bool isStarted = false;
-char inChar;
-String inString = "";    // string to hold input
+//char inChar;
+char inString[INPUT_LEN_MAX];
+uint8_t inPos = 0;
+//String inString = "";    // string to hold input
 bool result;
 
 void setup(void) {
@@ -19,20 +21,24 @@ void setup(void) {
 void loop(void) {
   //delay(1);
   while (Serial.available()) {
-    inChar  = Serial.read();
+    char inChar = Serial.read();
     //Serial.println("R");
-    if(inChar == '<'){
+    if (inChar == '<'){
       isStarted = true;
-      inString = "";
+      inPos = 0;
+      //inString[inPos++] = inChar;
     }
-    else if (inChar == '>'){
-      Serial.print(inString + " ");
+    else if (inChar == '>' && isStarted){
+      inString[inPos] = '\0';
+      Serial.println(inString);
       result = DCC.processCommand(inString);
-      Serial.println(result? "ok":"error");
+      //Serial.println(result? "ok":"error");
       isStarted = false;
+      inString[0] = '\0';
     }
-    else if (isStarted){
-      inString += (char)inChar;
+    else{
+      inString[inPos++] = inChar;
+      inPos %= INPUT_LEN_MAX;
     }
   }
 }

@@ -57,7 +57,7 @@ uint8_t DCC_Controller::getDecoderIndex(uint8_t address) {
       return &(this->decoders[decoderCount++]);
     }
 */
-// frame format: Type, Address, Payload
+// Message format: Type, Address, Payload
 // Address: 1 byte [#d1].
 // Type S (speed control), Payload is 1 byte of direction [0,1], followed by 3-byte fixed size with 128 speed steps [%d3].
 // Type F (Function control), Payload is function 2 byte index [%d2], followed by 1 byte of on/off [0,1].
@@ -65,29 +65,29 @@ uint8_t DCC_Controller::getDecoderIndex(uint8_t address) {
 // Type R (Release Emergency stop)
 // Type C (Configure a CV value)
 
-// Returns true if the frame is valid, false otherwise.
-bool DCC_Controller::processCommand(String frame) {
+// Returns true if the message is valid, false otherwise.
+bool DCC_Controller::processCommand(char msg[]) {
   //Serial.println("Receieved Frame");
-  char firstChar = frame[0];
+  char firstChar = msg[0];
   bool isValid;
   switch (firstChar) {
     case 'S':
-      isValid = CmdSpeed(frame);
+      isValid = CmdSpeed(msg);
       break;
     case 'F':
-      isValid = CmdFunction(frame);
+      isValid = CmdFunction(msg);
       break;
     case 'E':
-      isValid = CmdEmergencyStop();
+      isValid = CmdEmergencyStop(msg);
       break;
     case 'R':
-      isValid = CmdRelease();
+      isValid = CmdRelease(msg);
       break;
     case 'C':
       //isValid = CmdChangeCV();
       break;
     case 'W':
-      isValid = CmdReset(frame);
+      isValid = CmdReset(msg);
       break;
   }
   if (control_state == Startup){
@@ -98,18 +98,25 @@ bool DCC_Controller::processCommand(String frame) {
   return isValid;
 }
 
-bool DCC_Controller::CmdSpeed(String frame) {
-  if (frame.length()!= 6){
+bool DCC_Controller::CmdSpeed(char msg[]) {
+  if (strlen(msg) != 6){
     return false;
   }
 
-  uint8_t address = frame.substring(1, 2).toInt();
-  bool direction = frame.substring(2, 3).toInt();
-  uint8_t speedStep = frame.substring(3, 6).toInt();
+  char address_text[2]; // Needs 1 more byte for '\0'
+  char direction_text[2];
+  char speedStep_text[4];
 
-  //Serial.println("Address: " + String(address));
-  //Serial.println("Direction: " + String(direction));
-  //Serial.println("SpeedStep: " + String(speedStep));
+  strncpy(address_text, &msg[1], 1);
+  address_text[1] = '\0';
+  strncpy(direction_text, &msg[2], 1);
+  direction_text[1] = '\0';
+  strncpy(speedStep_text, &msg[3], 3);
+  speedStep_text[3] = '\0';
+
+  uint8_t address = (uint8_t) atoi(address_text);
+  bool direction = (bool) atoi(direction_text);
+  uint8_t speedStep = (uint8_t) atoi(speedStep_text);
 
   uint8_t decoderIndex = this->getDecoderIndex(address);
 
@@ -124,18 +131,25 @@ bool DCC_Controller::CmdSpeed(String frame) {
   return true;
 }
 
-bool DCC_Controller::CmdFunction(String frame) {
-    if (frame.length()!= 5){
+bool DCC_Controller::CmdFunction(char msg[]) {
+    if (strlen(msg) != 5){
     return false;
   }
 
-  uint8_t address = frame.substring(1, 2).toInt();
-  uint8_t fun = frame.substring(2, 4).toInt();
-  bool isOn = frame.substring(4, 5).toInt();
+  char address_text[2]; // Needs 1 more byte for '\0'
+  char fun_text[3];
+  char isOn_text[2];
 
-  //Serial.println("Address: " + String(address));
-  //Serial.println("Func: " + String(fun));
-  //Serial.println("IsOn: " + String(isOn));
+  strncpy(address_text, &msg[1], 1);
+  address_text[1] = '\0';
+  strncpy(fun_text, &msg[2], 2);
+  fun_text[2] = '\0';
+  strncpy(isOn_text, &msg[4], 1);
+  isOn_text[1] = '\0';
+
+  uint8_t address = (uint8_t) atoi(address_text);
+  uint8_t fun = (uint8_t) atoi(fun_text);
+  bool isOn  = (bool) atoi(isOn_text);
 
   uint8_t decoderIndex = this->getDecoderIndex(address);
 
@@ -145,8 +159,6 @@ bool DCC_Controller::CmdFunction(String frame) {
   } else {
     d->ClearFunc(fun);
   }
-
-  //Serial.println("Idebug" + d->toString());
 
   Packet m;
   if (fun <= 4) {
@@ -164,7 +176,7 @@ bool DCC_Controller::CmdFunction(String frame) {
   return true;
 }
 
-bool DCC_Controller::CmdEmergencyStop() {
+bool DCC_Controller::CmdEmergencyStop(char msg[]) {
   if (this->control_state!=EmergencyStop){
     // The signal generator will send stop packet only in EmergencyStop state.
     cli();
@@ -183,7 +195,7 @@ bool DCC_Controller::CmdEmergencyStop() {
   return false;
 }
 
-bool DCC_Controller::CmdRelease() {
+bool DCC_Controller::CmdRelease(char msg[]) {
   // Release from EmergencyStop state.
   if (this->control_state == EmergencyStop){
     cli();
@@ -194,7 +206,7 @@ bool DCC_Controller::CmdRelease() {
   return false;
 }
 
-bool DCC_Controller::CmdChangeCV() {
+bool DCC_Controller::CmdChangeCV(char msg[]) {
   // you must reset the arduino after using this command.
   // Otherwise, the CV instruction packet will stay in the pool forever.
   Packet m = DCC_Packet_Generator::getConfigurationVariableAccessInstructionPacket(0x03, 1, 0x05);
@@ -202,7 +214,7 @@ bool DCC_Controller::CmdChangeCV() {
   return true;
 }
 
-bool DCC_Controller::CmdReset(String frame){
+bool DCC_Controller::CmdReset(char msg[]){
 #if defined(__AVR__)
   wdt_enable(WDTO_15MS);
   return true;
