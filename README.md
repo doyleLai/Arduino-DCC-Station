@@ -1,27 +1,28 @@
 # Arduino-DCC-Station
+A simple Arduino model train control (DCC) system acts as a command station to control DCC decoders.
+
 This project adapted Michael Blank's [program code](http://www.oscale.net/en/simpledcc) for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides command controls interface on the serial port.
 
-The Arduino program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
+The program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
 
 ## Board Compatibility
-The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal. Not all Arduino boards are supported.
+The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal. The following Arduino boards are supported.
 
-Supported boards:
 - Arduino UNO (Other ATmega328p based boards may be supported)
 - Arduino UNO WiFi Rev.2 (Other ATmega4809 based boards may be supported)
 
 ## Wiring
-Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Connect the two output pins of the H-bridge to the track. Be sure you use an H-bridge to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track nor locomotives directly. 
+Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Connect the two output pins of the H-bridge to the track. Be sure you use an H-bridge to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track nor locomotives directly. Also, make sure you use an external power source instead of the USB 5v to power the H-bridge. The nominal voltages limit for N and HO scale are 12v and 15v according to the NMRA standard ([S-9.1](https://www.nmra.org/sites/default/files/standards/sandrp/pdf/s-9.1_electrical_standards_for_digital_command_control_2021.pdf)).
 
 ## Installation
 1. Download and unzip the project.
 2. Open the folder "Arduino-DCC-Station" with Arduino IDE.
-3. Upload the program to your Arduino board.
+3. Upload the sketch to your Arduino board.
 4. Connect the Arduino to the H-bridge circuit and the track.
 5. Open Serial Monitor and send control messages (see below) to control your locos. 
 
 ## Control Messages
-The program reads control messages from the default serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system will output DCC packets to all locomotives periodically without the need of repetitive control messages.
+The program reads control messages from the default serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system will output DCC packets to the rails continuously without having the need of resending control messages.
 
 ### Message format
 Each message is enclosed by "<>" and has the following format:
