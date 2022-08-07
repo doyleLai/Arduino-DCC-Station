@@ -2,18 +2,22 @@
 
 #include "DCC_Controller.h"
 #define INPUT_LEN_MAX 10
+#define EN_PIN 10
+
 bool isStarted = false;
 char inString[INPUT_LEN_MAX];
 uint8_t inPos = 0;
 bool result;
 
 void setup(void) {
+  pinMode(EN_PIN, OUTPUT);
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
   DCC.DCC_begin();
+  digitalWrite(EN_PIN, HIGH);
 }
 
 void loop(void) {
