@@ -77,6 +77,23 @@ Stop all locomotives. This message will instruct all digital decoders shall stop
 ```
 Resume normal operation. Locomotives will remain stationary unless a new speed step is set. 
 
+## Repetition of packets Transmission
+Some packets are sent repeatedly as per the requirement of NMRA standard ([S-9.2](https://www.nmra.org/sites/default/files/s-92-2004-07.pdf)) and to keep the consistency of the controller and locos’ behaviours. The NMRA standard only mentioned packets should be repeated as frequently as possible but did not define how a particular packet should be repeated. This program has the following approach.
+
+The program consists of two packet pools, which can be considered as output buffers. The priority pool, implemented as a queue (FIFO), stores packets to be sent first. The repetitive pool, implemented as a circulated array, stores packets that need repetition of output. Each slot in the repetitive pool is dedicated to a specific type of packet of a loco address. Six types of packets are needed for one loco. Hence, each loco occupies six slots in the repetitive pool. Packets stay there, and one is replaced by a new one when the associated state of the loco changes.
+
+|Type of Packet | Function|
+| ------------- | ------------- |
+|Advanced Operations Instruction | 128 Speed Step Control|
+|Function Group One Instruction | FL and F1-F4 Function Control|
+|Function Group Two Instruction (F5-F8) | F5-F8 Function Control|
+|Function Group Two Instruction (F9-F12) | F9-F12 Function Control|
+|Feature Expansion Instruction (F13-F20) | F13-F20 Function Control|
+|Feature Expansion Instruction (F21-F28) | F21-F28 Function Control|
+
+When a control message comes, two identical packets of the corresponding command are pushed to the priority pool and one is written to the specific slot in the repetitive pool. The second packet to the priority pool compensates the first in case the first is lost during transmission. When a packet is available in the priority pool, the DCC signal generator will fetch the packet from there for the next output. This ensures that locos can act instantly to the control message. Once a packet is fetched from the priority pool, it is erased.
+
+When the priority pool is empty, the generator fetches a packet from the respective pool in turn. Since packets in the repetitive pool stay there during the system lifetime, the system can continuously output meaningful packets even when no control message comes and keep locos' behaviours consistent with the controller.
 
 ## Disclaimer
 You should take your own risk to use anything in this project. The author of the project is not responsible for any damage, hurt, or other kinds of accident caused by the use of the program code and the suggested electronic components.
