@@ -1,25 +1,27 @@
 # Arduino-DCC-Station
 A simple Arduino model train control (DCC) system acts as a command station to control DCC decoders.
 
-This project adapted Michael Blank's [program code](http://www.oscale.net/en/simpledcc) for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides command controls interface on the serial port.
+This project adapted Michael Blank's program code for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides a command controls interface on the serial port. Because of that, you don't need extra hardware components such as a keypad or potentiometer to control trains, except for the serial monitor on your computer. This also makes it easy to develop a human interface system to work with this program.
 
-The program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost up the signal to power the track and locomotives.
+The program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost the signal to power the track and locomotives.
 
 ## Board Compatibility
 The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal. The following Arduino boards are supported.
 
 - Arduino UNO (Other ATmega328p based boards may be supported)
+  - Timer 2 is used
 - Arduino UNO WiFi Rev.2 (Other ATmega4809 based boards may be supported)
+  - Timer B0 is used
 
 ## Wiring
 ### Power
 Use an H-bridge circuit or a motor driver module to deliver the amount of current used by locomotives and their motors. Do not connect any Arduino pins to the track or locomotives directly. Also, use an external power source instead of the USB 5v to power the H-bridge circuit. The nominal voltages limit for N and HO scales are 12v and 15v according to the NMRA standard ([S-9.1](https://www.nmra.org/sites/default/files/standards/sandrp/pdf/s-9.1_electrical_standards_for_digital_command_control_2021.pdf)).
 ### DCC Signal - Pin 11 and 12 
 Pin 11 and 12 provide a pair of opposite DCC signals. Connect them to the two direction pins of the H-bridge. If you use a motor driver module with only one direction pin, use either Pin 11 or 12. Connect the two output pins of the H-bridge to the track. 
-### Enable Pin - Pin 10
+### Enable Signal - Pin 10
 The Enable signal at Pin 10 will be HIGH when the program start generating DCC signals. Connect this pin to the enable or PWM pin of the motor driver. 
 This pin is important if your motor driver only uses one pin for direction control. Arduino takes around 0.5s to boot up. Without DCC signal waveforms during this period, the motor driver may output a static DC voltage to the track. This short time is long enough to trigger some DCC decoders to operate in DC mode, leading the motor to spin at full speed unexpectedly. This pin ensures the motor driver turns on only when the program is ready.
-### Notes to Arduino Motor Shield Rev3 users
+### Notes to Arduino Motor Shield Rev3 Users
 Add the following codes to setup(). Connect the channel A output to the track.
 ```
 pinMode(3, OUTPUT);
@@ -40,7 +42,7 @@ digitalWrite(9, LOW); // disables the brake function of the shield
 ## Control Messages
 The program reads control messages from the default serial port and generates corresponding DCC signals. The states of locomotives, including the direction, speed step and function ON/OFFs of F0-F20 (F0 refers to headlight), are stored in the SRAM so the system will output DCC packets to the rails continuously without having the need of resending control messages.
 
-### Message format
+### Message Format
 Each message is enclosed by "<>" and has the following format:
 ```
 Type (1 byte), Address (1 byte), Payload
