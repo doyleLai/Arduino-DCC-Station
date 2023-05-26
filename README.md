@@ -12,7 +12,23 @@ The program uses the hardware timer and interrupts to achieve the precise pulse 
 - Arduino UNO WiFi Rev.2 (Other ATmega4809 based boards may be supported)
 
 ## Wiring
-Connect pin 11 and pin 12 on Arduino to the two input pins of the H-bridge. Connect the two output pins of the H-bridge to the track. Be sure you use an H-bridge to deliver the large current flow used by locomotives. Do not connect Arduino pins to the track nor locomotives directly. Also, make sure you use an external power source instead of the USB 5v to power the H-bridge. The nominal voltages limit for N and HO scale are 12v and 15v according to the NMRA standard ([S-9.1](https://www.nmra.org/sites/default/files/standards/sandrp/pdf/s-9.1_electrical_standards_for_digital_command_control_2021.pdf)).
+### Power
+Use an H-bridge circuit or a motor driver module to deliver the amount of current used by locomotives and their motors. Do not connect any Arduino pins to the track or locomotives directly. Also, use an external power source instead of the USB 5v to power the H-bridge circuit. The nominal voltages limit for N and HO scales are 12v and 15v according to the NMRA standard ([S-9.1](https://www.nmra.org/sites/default/files/standards/sandrp/pdf/s-9.1_electrical_standards_for_digital_command_control_2021.pdf)).
+### DCC Signal - Pin 11 and 12 
+Pin 11 and 12 provide a pair of opposite DCC signals. Connect them to the two direction pins of the H-bridge. If you use a motor driver module with only one direction pin, use either Pin 11 or 12. Connect the two output pins of the H-bridge to the track. 
+### Enable Pin - Pin 10
+The Enable signal at Pin 10 will be HIGH when the program start generating DCC signals. Connect this pin to the enable or PWM pin of the motor driver. 
+This pin is important if your motor driver only uses one pin for direction control. Arduino takes around 0.5s to boot up. Without DCC signal waveforms during this period, the motor driver may output a static DC voltage to the track. This short time is long enough to trigger some DCC decoders to operate in DC mode, leading the motor to spin at full speed unexpectedly. This pin ensures the motor driver turns on only when the program is ready.
+### Notes to Arduino Motor Shield Rev3 users
+Add the following codes to setup(). Connect the channel A output to the track.
+```
+pinMode(3, OUTPUT);
+digitalWrite(3, HIGH); // sets PWM (EN1 of L298) HIGH
+
+pinMode(9, OUTPUT);
+digitalWrite(9, LOW); // disables the brake function of the shield
+```
+
 
 ## Installation
 1. Download and unzip the project.
