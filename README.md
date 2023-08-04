@@ -1,16 +1,16 @@
 # Arduino-DCC-Station
 A simple Arduino model train control (DCC) system acts as a command station to control DCC decoders.
 
-This project adapted Michael Blank's program code for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides a command controls interface on the serial port. Because of that, you don't need extra hardware components such as a keypad or potentiometer to control trains, except for the serial monitor on your computer. This also makes it easy to develop a human interface system to work with this program.
+This project adapted Michael Blank's program code for signal generation. The original program supports one decoder only. This program supports up to 9 decoders and provides a command controls interface on the serial port. Because of that, you don't need extra hardware components such as a keypad or potentiometer to control trains. The only thing needed is the serial monitor on your computer. This also makes it easy for you to develop a human interface system to work with this program.
 
 The program generates two opposite DCC signals. When one signal goes HIGH, the other goes LOW, and vice versa. That means you can connect them to an H-bridge circuit to boost the signal to power the track and locomotives.
 
 ## Board Compatibility
 The program uses the hardware timer and interrupts to achieve the precise pulse width generations of the DCC signal. The following Arduino boards are supported.
 
-- Arduino UNO (Other ATmega328p based boards may be supported)
+- Arduino UNO (Other boards based on ATmega328p may be supported)
   - Timer 2 is used
-- Arduino UNO WiFi Rev.2 (Other ATmega4809 based boards may be supported)
+- Arduino UNO WiFi Rev.2 / Arduino Nano Every (Other boards based on ATmega4809 may be supported)
   - Timer B0 is used
 
 ## Wiring
@@ -93,10 +93,18 @@ Stop all locomotives. This message will instruct all digital decoders shall stop
 ```
 <R>
 ```
-Resume normal operation. Locomotives will remain stationary unless a new speed step is set. 
+Resume normal operation. Locomotives will remain stationary unless a new speed step is set.
+
+### Type W - Software reset
+```
+<W>
+```
+Reset the Arduino in software. After reset, the station sends out reset packets to locos until a valid control command message is received.
 
 ## Repetition of packets Transmission
-Some packets are sent repeatedly as per the requirement of NMRA standard ([S-9.2](https://www.nmra.org/sites/default/files/s-92-2004-07.pdf)) and to keep the consistency of the controller and locos’ behaviours. The NMRA standard only mentioned packets should be repeated as frequently as possible but did not define how a particular packet should be repeated. This program has the following approach.
+When the Arduino startup, the program will send out reset packets continuously until a valid control command message is received from the serial port. This ensures all locos in the track stop running after the Arduino reset.
+
+Some control packets are sent repeatedly as per the requirement of NMRA standard ([S-9.2](https://www.nmra.org/sites/default/files/s-92-2004-07.pdf)) and to keep the consistency of the controller and locos’ behaviours. The NMRA standard only mentioned packets should be repeated as frequently as possible but did not define how a particular packet should be repeated. This program has the following approach.
 
 The program consists of two packet pools, which can be considered as output buffers. The priority pool, implemented as a queue (FIFO), stores packets to be sent first. The repetitive pool, implemented as a circulated array, stores packets that need repetition of output. Each slot in the repetitive pool is dedicated to a specific type of packet of a loco address. Six types of packets are needed for one loco. Hence, each loco occupies six slots in the repetitive pool. Packets stay there, and one is replaced by a new one when the associated state of the loco changes.
 

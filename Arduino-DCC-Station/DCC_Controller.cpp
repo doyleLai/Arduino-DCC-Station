@@ -216,8 +216,14 @@ bool DCC_Controller::CmdChangeCV(char msg[]) {
 
 bool DCC_Controller::CmdReset(char msg[]){
 #if defined(__AVR__)
-  wdt_enable(WDTO_15MS);
-  return true;
+  #ifdef __AVR_ATmega328P__
+    wdt_enable(WDTO_15MS);
+    return true;
+  #elif defined(ARDUINO_ARCH_MEGAAVR)
+    RSTCTRL.RSTFR |= RSTCTRL_WDRF_bm ;
+    wdt_enable(WDT_PERIOD_16CLK_gc); //16ms
+    return true;
+  #endif
 #endif
   return false;
 }
