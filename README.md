@@ -10,16 +10,16 @@ The program uses the hardware timer and interrupts to achieve the precise pulse 
 
 - Arduino UNO (Other boards based on ATmega328p may be supported)
   - Timer 2 is used
-- Arduino UNO WiFi Rev.2 / Arduino Nano Every (Other boards based on ATmega4809 may be supported)
-  - Timer B0 is used
+- Arduino UNO WiFi Rev.2 and Arduino Nano Every (Other boards based on ATmega4809 may be supported)
+  - TCB0 is used
 
 ## Wiring
 ### Power
-Use an H-bridge circuit or a motor driver module to deliver the amount of current used by locomotives and their motors. Do not connect any Arduino pins to the track or locomotives directly. Also, use an external power source instead of the USB 5v to power the H-bridge circuit. The nominal voltages limit for N and HO scales are 12v and 15v according to the NMRA standard ([S-9.1](https://www.nmra.org/sites/default/files/standards/sandrp/pdf/s-9.1_electrical_standards_for_digital_command_control_2021.pdf)).
+You must use an H-bridge circuit or a motor driver module to deliver the amount of current used by locomotives and their motors. Do not connect any Arduino pins to the track or locomotives directly. Also, you must use an external power source instead of the USB 5v to power the H-bridge/motor driver. The nominal voltages limit for N and HO scales are 12v and 15v respectively according to the NMRA standard ([S-9.1](https://www.nmra.org/sites/default/files/standards/sandrp/pdf/s-9.1_electrical_standards_for_digital_command_control_2021.pdf)).
 ### DCC Signal - Pin 11 and 12 
-Pin 11 and 12 provide a pair of opposite DCC signals. Connect them to the two direction pins of the H-bridge. If you use a motor driver module with only one direction pin, use either Pin 11 or 12. Connect the two output pins of the H-bridge to the track. 
+Pin 11 and 12 provide a pair of opposite DCC signals. Connect them to the two direction pins of the H-bridge. If you use a motor driver with only one direction pin, use either Pin 11 or 12. Connect the two output pins of the H-bridge/motor driver to the track. 
 ### Enable Signal - Pin 10
-The Enable signal at Pin 10 will be HIGH when the program start generating DCC signals. Connect this pin to the enable or PWM pin of the motor driver. 
+The Enable signal at Pin 10 will go HIGH when the program start generating DCC signals. Connect this pin to the enable or PWM pin of the motor driver. 
 This pin is important if your motor driver only uses one pin for direction control. Arduino takes around 0.5s to boot up. Without DCC signal waveforms during this period, the motor driver may output a static DC voltage to the track. This short time is long enough to trigger some DCC decoders to operate in DC mode, leading the motor to spin at full speed unexpectedly. This pin ensures the motor driver turns on only when the program is ready.
 ### Notes to Arduino Motor Shield Rev3 Users
 Add the following codes to setup(). Connect the channel A output to the track.
